@@ -28,23 +28,9 @@ export type RawPokemon = {
   name: string
   height: number
   weight: number
-  pokemon_v2_pokemonabilities: PokemonAbility[]
   pokemon_v2_pokemontypes: PokemonType[]
-  pokemon_v2_pokemonstats: PokemonStat[]
   pokemon_v2_pokemonsprites: PokemonSprites[]
+  pokemon_v2_pokemonabilities: PokemonAbility[]
+  pokemon_v2_pokemonstats: PokemonStat[]
   pokemon_v2_pokemonspecy: PokemonSpecies
-}
-
-export type ParsedPokemon = {
-  id: number
-  name: string
-  height: number
-  imageUrl: string
-  types: string[]
-  stats: { name: string; value: number }[]
-  growthRate?: string
-  genderRate?: number
-  hatchSteps?: number
-  effortValues?: string
-  description?: string
 }
