@@ -31,7 +31,7 @@ export function normalizePokemon(item: RawPokemon | null) {
     imageUrl,
     types,
     stats,
-    growthRate,
+    growthRate: formatString(growthRate),
     genderRate,
     hatchSteps,
     catchRate,

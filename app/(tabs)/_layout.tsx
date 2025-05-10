@@ -35,7 +35,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="compare"
         options={{
           title: 'Compare',
           tabBarIcon: ({ color }) => (

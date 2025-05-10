@@ -39,7 +39,7 @@ export default function PokemonDetail() {
         <InfoRow label="Approx. Height: " value={`${pokemon?.height} cm`} />
         <InfoRow label="Approx. Weight: " value={`${pokemon?.weight} kg`} />
         <InfoRow label="Catch Rate: " value={`${pokemon?.catchRate}%`} />
-        <InfoRow label="Growth Rate: " value={formatString(pokemon?.growthRate || '')} />
+        <InfoRow label="Growth Rate: " value={pokemon?.growthRate} />
         <InfoRow label="Effort Values: " value={pokemon?.effortValues} />
         <InfoRow label="Abilities: " value={pokemon?.abilities} />
         <InfoRow label="Hatch Steps" value={String(pokemon?.hatchSteps)} />

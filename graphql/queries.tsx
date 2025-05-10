@@ -58,3 +58,12 @@ export const GET_POKEMON_DETAIL = gql`
     }
   }
 `
+
+export const GET_POKEMON_DROPDOWN = gql`
+  query getPokemonsDropdownQuery {
+    pokemon_v2_pokemon(order_by: { id: asc }) {
+      id
+      name
+    }
+  }
+`
