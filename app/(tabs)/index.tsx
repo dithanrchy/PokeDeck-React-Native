@@ -1,76 +1,77 @@
-import { Image } from 'expo-image'
-import { Platform, StyleSheet } from 'react-native'
-
-import { HelloWave } from '@/components/HelloWave'
-import ParallaxScrollView from '@/components/ParallaxScrollView'
+import LoadingIndicator from '@/components/LoadingIndicator'
+import PokemonCard from '@/components/PokemonCard'
 import { ThemedText } from '@/components/ThemedText'
 import { ThemedView } from '@/components/ThemedView'
+import { useQuery } from '@apollo/client'
+import { FlatList, SafeAreaView, StyleSheet } from 'react-native'
+import { GET_POKEMON_LIST } from '../../graphql/queries'
 
-export default function HomeScreen() {
+export default function PokemonList() {
+  const { data, loading, error } = useQuery(GET_POKEMON_LIST, {
+    variables: { limit: 20, offset: 0 },
+  })
+
+  if (loading) return <LoadingIndicator />
+  if (error) return <ThemedText>Error!</ThemedText>
+
+  const renderItem = ({ item }: any) => {
+    const imageUrl = item.pokemon_v2_pokemonsprites?.[0]?.sprites
+    const types = item.pokemon_v2_pokemontypes.map((t: any) => t.pokemon_v2_type.name)
+
+    return <PokemonCard id={item.id} name={item.name} types={types} imageUrl={imageUrl} />
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <SafeAreaView style={{ flex: 1 }}>
+      <ThemedView>
+        <FlatList
+          data={data.pokemon_v2_pokemon}
+          keyExtractor={item => item.id.toString()}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={{
+            ...styles.container,
+            paddingBottom: 100,
+            paddingTop: 10,
+          }}
+          renderItem={renderItem}
+          ListHeaderComponent={() => <ThemedText style={styles.appTitle}>{'Pokémon'}</ThemedText>}
         />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  appTitle: { fontSize: 24, fontWeight: 'bold', padding: 16 },
+  container: {
+    paddingHorizontal: 10,
+    paddingTop: 10,
   },
-  stepContainer: {
-    gap: 8,
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  card: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 12,
+    padding: 10,
+    width: '48%',
+    alignItems: 'center',
+  },
+  image: {
+    width: 80,
+    height: 80,
+    resizeMode: 'contain',
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  name: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    textTransform: 'capitalize',
+  },
+  types: {
+    fontSize: 12,
+    color: '#555',
   },
 })
