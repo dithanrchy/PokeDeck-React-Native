@@ -28,6 +28,7 @@ export default function RootLayout() {
             name="pokemon/[id]"
             options={{ headerBackTitle: 'Back', title: 'Pokemon Detail' }}
           />
+          <Stack.Screen name="filter" options={{ headerBackTitle: 'Back', title: 'Filter' }} />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

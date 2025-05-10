@@ -67,3 +67,12 @@ export const GET_POKEMON_DROPDOWN = gql`
     }
   }
 `
+
+export const GET_POKEMON_TYPES = gql`
+  query getPokemonTypesQuery {
+    pokemon_v2_type {
+      id
+      name
+    }
+  }
+`

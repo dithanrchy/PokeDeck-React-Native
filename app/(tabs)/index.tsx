@@ -1,3 +1,4 @@
+import ChipFilter from '@/components/ChipFilter'
 import LoadingIndicator from '@/components/LoadingIndicator'
 import PokemonCard from '@/components/PokemonCard'
 import { ThemedText } from '@/components/ThemedText'
@@ -6,39 +7,70 @@ import { GET_POKEMON_LIST } from '@/graphql/queries'
 import { RawPokemon } from '@/types/pokemon'
 import useDebounce from '@/utils/useDebounce'
 import { useLazyQuery } from '@apollo/client'
-import { useCallback, useEffect, useState } from 'react'
-import { FlatList, SafeAreaView, StyleSheet, TextInput, View } from 'react-native'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { FlatList, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
 const PAGE_SIZE = 20
 
 export default function PokemonList() {
+  const params = useLocalSearchParams()
+  const router = useRouter()
+
+  const filter = useMemo(() => {
+    try {
+      return params?.filter ? JSON.parse(params.filter as string) : null
+    } catch {
+      return null
+    }
+  }, [params?.filter])
+
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [hasMounted, setHasMounted] = useState(false)
 
   const [fetchPokemon, { loading, data, fetchMore }] = useLazyQuery(GET_POKEMON_LIST)
 
+  const buildWhere = (term: string, filter: any) => {
+    return {
+      ...(term ? { name: { _ilike: `%${term.toLowerCase()}%` } } : {}),
+      ...(filter?.type
+        ? {
+            pokemon_v2_pokemontypes: {
+              pokemon_v2_type: {
+                name: { _eq: filter.type },
+              },
+            },
+          }
+        : {}),
+    }
+  }
+
+  const goToFilter = () => {
+    router.push('/filter')
+  }
+
   useEffect(() => {
+    const where = buildWhere(searchTerm, filter)
     fetchPokemon({
       variables: {
         limit: PAGE_SIZE,
         offset: 0,
-        where: {},
+        where,
       },
     })
     setHasMounted(true)
-  }, [])
+  }, [filter])
 
   useDebounce(
     searchTerm,
     value => {
       if (!hasMounted) return
-
       fetchPokemon({
         variables: {
           limit: PAGE_SIZE,
           offset: 0,
-          where: value.trim().length > 0 ? { name: { _ilike: `%${value.toLowerCase()}%` } } : {},
+          where: buildWhere(value, filter),
         },
       })
     },
@@ -49,13 +81,11 @@ export default function PokemonList() {
     if (loading || isLoadingMore || !data?.pokemon_v2_pokemon?.length) return
 
     setIsLoadingMore(true)
-
     fetchMore({
       variables: {
         offset: data.pokemon_v2_pokemon.length,
         limit: PAGE_SIZE,
-        where:
-          searchTerm.trim().length > 0 ? { name: { _ilike: `%${searchTerm.toLowerCase()}%` } } : {},
+        where: buildWhere(searchTerm, filter),
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         setIsLoadingMore(false)
@@ -63,7 +93,6 @@ export default function PokemonList() {
 
         const all = [...prev.pokemon_v2_pokemon, ...fetchMoreResult.pokemon_v2_pokemon]
         const unique = Array.from(new Map(all.map(p => [p.id, p])).values())
-
         return {
           ...prev,
           pokemon_v2_pokemon: unique,
@@ -77,13 +106,21 @@ export default function PokemonList() {
   const renderItem = useCallback(({ item }: { item: RawPokemon }) => {
     const imageUrl = item.pokemon_v2_pokemonsprites?.[0]?.sprites
     const types = item.pokemon_v2_pokemontypes.map(t => t.pokemon_v2_type.name)
-
     return <PokemonCard id={item.id} name={item.name} types={types} imageUrl={imageUrl} />
   }, [])
 
   const pokemonList = data?.pokemon_v2_pokemon ?? []
   const isSearching = searchTerm.trim().length > 0
   const noResults = !loading && isSearching && pokemonList.length === 0
+
+  const handleClearFilter = () => {
+    router.push({
+      pathname: '/',
+      params: {
+        filter: JSON.stringify({ type: null }),
+      },
+    })
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -97,21 +134,23 @@ export default function PokemonList() {
             onChangeText={setSearchTerm}
             placeholderTextColor="#999"
           />
+          <TouchableOpacity style={styles.filterButton} onPress={goToFilter}>
+            <ThemedText style={styles.filterButtonText}>Filter</ThemedText>
+          </TouchableOpacity>
         </View>
 
-        {/* Loading state */}
+        {filter?.type && <ChipFilter label={filter.type} onClear={handleClearFilter} />}
+
         {loading && pokemonList.length === 0 && (
           <View style={styles.centerContent}>
             <LoadingIndicator />
           </View>
         )}
 
-        {/* No results */}
         {noResults && (
           <ThemedText style={styles.noResults}>No Pokemon found matching "{searchTerm}"</ThemedText>
         )}
 
-        {/* Pokemon list */}
         <FlatList
           data={pokemonList}
           keyExtractor={item => item.id.toString()}
@@ -151,8 +190,11 @@ const styles = StyleSheet.create({
   searchContainer: {
     marginVertical: 10,
     marginHorizontal: 5,
+    flexDirection: 'row',
+    gap: 8,
   },
   searchInput: {
+    flex: 1,
     backgroundColor: '#f5f5f5',
     padding: 12,
     borderRadius: 10,
@@ -166,5 +208,16 @@ const styles = StyleSheet.create({
   row: {
     justifyContent: 'space-between',
     marginBottom: 12,
+  },
+  filterButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#007AFF',
+    borderRadius: 10,
+    justifyContent: 'center',
+  },
+  filterButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 })
