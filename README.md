@@ -1,50 +1,41 @@
-# Welcome to your Expo app 👋
+# Pokedeck
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# Pokedec Application
 
-## Get started
+Pokedec is an app that brings the world of Pokémon to your fingertips, displaying Pokémon in a style similar to a deck of cards. Each Pokémon is represented as a card, and users can sort, filter, and explore detailed information about them. The app fetches data from the Pokémon GraphQL API and provides an engaging way to interact with the Pokémon universe.
 
-1. Install dependencies
+## Features
 
+- **Pokémon Deck**: Displays a deck of Pokémon in a card-like format, fetched from the Pokémon GraphQL API.
+- **Sorting**: Sort the deck of Pokémon by name in ascending or descending order.
+- **Filter**: Filter Pokémon cards based on types.
+- **Pokémon Details**: Tap on a Pokémon card to view detailed information, including stats and abilities.
+
+## Technologies Used
+
+- **React Native**: For building the mobile application.
+- **Expo SDK**: For easier development.
+- **Apollo Client**: For fetching data from the Pokémon GraphQL API.
+- **TypeScript**: For type safety and improved development experience.
+
+## Setup
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/dithanrchy/PokeDeck-React-Native.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd PokeDeck-React-Native
+   ```
+3. Install dependencies:
    ```bash
    npm install
    ```
-
-2. Start the app
-
+4. Start the project:
    ```bash
-   npx expo start
+   npm start
    ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+5. Open the app on an emulator or physical device using Expo Go.
+   - For **iOS**, press `i` to open in the iOS simulator.
+   - For **Android**, press `a` to open in the Android emulator or scan the QR code with the Expo Go app on your physical device.
