@@ -7,10 +7,11 @@ import { IconSymbol } from './ui/IconSymbol'
 
 interface ChipFilterProps {
   label: string
-  onClear: () => void
+  filterKey: 'type' | 'sort'
+  onClear: (key: 'type' | 'sort') => void
 }
 
-const ChipFilter: React.FC<ChipFilterProps> = ({ label, onClear }) => {
+const ChipFilter: React.FC<ChipFilterProps> = ({ label, filterKey, onClear }) => {
   const theme = useColorScheme() ?? 'light'
 
   return (
@@ -19,8 +20,8 @@ const ChipFilter: React.FC<ChipFilterProps> = ({ label, onClear }) => {
       lightColor={Colors.light.secondaryButton}
       darkColor={Colors.dark.secondaryButton}
     >
-      <ThemedText style={styles.chipText}>Active Filter: {label}</ThemedText>
-      <TouchableOpacity onPress={onClear}>
+      <ThemedText style={styles.chipText}> {`${filterKey}: ${label}`}</ThemedText>
+      <TouchableOpacity onPress={() => onClear(filterKey)}>
         <IconSymbol
           size={18}
           name="x.circle"

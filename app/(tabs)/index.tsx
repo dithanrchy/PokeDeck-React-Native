@@ -19,9 +19,9 @@ export default function PokemonList() {
 
   const filter = useMemo(() => {
     try {
-      return params?.filter ? JSON.parse(params.filter as string) : null
+      return params?.filter ? JSON.parse(params.filter as string) : {}
     } catch {
-      return null
+      return {}
     }
   }, [params?.filter])
 
@@ -38,7 +38,7 @@ export default function PokemonList() {
         ? {
             pokemon_v2_pokemontypes: {
               pokemon_v2_type: {
-                name: { _eq: filter.type },
+                name: { _eq: filter?.type },
               },
             },
           }
@@ -57,6 +57,7 @@ export default function PokemonList() {
         limit: PAGE_SIZE,
         offset: 0,
         where,
+        order_by: filter?.sort || 'asc',
       },
     })
     setHasMounted(true)
@@ -71,6 +72,7 @@ export default function PokemonList() {
           limit: PAGE_SIZE,
           offset: 0,
           where: buildWhere(value, filter),
+          order_by: filter?.sort || 'asc',
         },
       })
     },
@@ -86,6 +88,7 @@ export default function PokemonList() {
         offset: data.pokemon_v2_pokemon.length,
         limit: PAGE_SIZE,
         where: buildWhere(searchTerm, filter),
+        order_by: filter?.sort || 'asc',
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         setIsLoadingMore(false)
@@ -113,11 +116,14 @@ export default function PokemonList() {
   const isSearching = searchTerm.trim().length > 0
   const noResults = !loading && isSearching && pokemonList.length === 0
 
-  const handleClearFilter = () => {
+  const handleClearFilter = (label: 'type' | 'sort') => {
+    const newFilter = { ...filter }
+    newFilter[label] = null
+
     router.push({
       pathname: '/',
       params: {
-        filter: JSON.stringify({ type: null }),
+        filter: JSON.stringify(newFilter),
       },
     })
   }
@@ -139,7 +145,14 @@ export default function PokemonList() {
           </TouchableOpacity>
         </View>
 
-        {filter?.type && <ChipFilter label={filter.type} onClear={handleClearFilter} />}
+        <ThemedView style={{ flexDirection: 'row' }}>
+          {filter?.sort && (
+            <ChipFilter label={filter?.sort} filterKey="sort" onClear={handleClearFilter} />
+          )}
+          {filter?.type && (
+            <ChipFilter label={filter?.type} filterKey="type" onClear={handleClearFilter} />
+          )}
+        </ThemedView>
 
         {loading && pokemonList.length === 0 && (
           <View style={styles.centerContent}>

@@ -1,55 +1,63 @@
-import LoadingIndicator from '@/components/LoadingIndicator'
 import { ThemedText } from '@/components/ThemedText'
 import { ThemedView } from '@/components/ThemedView'
 import { GET_POKEMON_TYPES } from '@/graphql/queries'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'expo-router'
-import React, { useState } from 'react'
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import { useState } from 'react'
+import { StyleSheet, Switch, TouchableOpacity } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
 
-const FilterScreen = () => {
-  const { data, loading, error } = useQuery(GET_POKEMON_TYPES)
-  const [open, setOpen] = useState(false)
-  const [selectedType, setSelectedType] = useState<string | null>(null)
+export default function FilterScreen() {
   const router = useRouter()
 
+  const { data } = useQuery(GET_POKEMON_TYPES)
+  const typeOptions =
+    data?.pokemon_v2_type.map((t: any) => ({
+      label: t.name,
+      value: t.name,
+    })) || []
+
+  const [open, setOpen] = useState(false)
+  const [selectedType, setSelectedType] = useState(null)
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+
   const handleApplyFilter = () => {
-    if (selectedType) {
-      router.replace({
-        pathname: '/', // Keep the current path
-        params: {
-          filter: JSON.stringify({ type: selectedType }), // Update the params
-        },
-      })
-    }
+    router.replace({
+      pathname: '/',
+      params: {
+        filter: JSON.stringify({
+          type: selectedType,
+          sort: sortOrder,
+        }),
+      },
+    })
   }
-
-  if (loading) return <LoadingIndicator />
-  if (error) return <ThemedText>Error fetching types!</ThemedText>
-
-  const pokemonTypes = data?.pokemon_v2_type ?? []
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.title}>Filter</ThemedText>
-      <ThemedText style={styles.subTitle}>Type</ThemedText>
+      <ThemedText style={styles.label}>Sort by Id</ThemedText>
+      <ThemedView style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+        <ThemedText style={{ marginRight: 10 }}>Sort Descending</ThemedText>
+        <Switch
+          value={sortOrder === 'desc'}
+          onValueChange={value => setSortOrder(value ? 'desc' : 'asc')}
+        />
+      </ThemedView>
+
+      <ThemedText style={styles.label}>Filter by Type</ThemedText>
       <DropDownPicker
         open={open}
-        value={selectedType}
-        items={pokemonTypes.map((type: { name: any }) => ({
-          label: type.name,
-          value: type.name,
-        }))}
         setOpen={setOpen}
+        items={typeOptions}
+        value={selectedType}
         setValue={setSelectedType}
-        placeholder="Select a type"
-        containerStyle={styles.dropdownContainer}
+        placeholder="Select Type"
         style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdown}
       />
 
-      <TouchableOpacity style={styles.applyButton} onPress={handleApplyFilter}>
-        <ThemedText style={styles.applyButtonText}>Apply Filter</ThemedText>
+      <TouchableOpacity onPress={handleApplyFilter} style={styles.button}>
+        <ThemedText style={styles.buttonText}>Apply Filter</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   )
@@ -57,39 +65,30 @@ const FilterScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
+    padding: 16,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  subTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  label: {
+    fontWeight: '600',
     marginBottom: 8,
-  },
-  dropdownContainer: {
-    marginBottom: 20,
+    fontSize: 16,
   },
   dropdown: {
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 10,
+    marginBottom: 20,
   },
-  applyButton: {
-    backgroundColor: '#007AFF',
-    padding: 12,
-    borderRadius: 8,
+  radioOption: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
+    marginBottom: 10,
   },
-  applyButtonText: {
+  button: {
+    marginTop: 24,
+    backgroundColor: '#007AFF',
+    padding: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
 })
-
-export default FilterScreen
