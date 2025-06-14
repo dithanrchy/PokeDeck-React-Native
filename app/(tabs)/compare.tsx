@@ -1,11 +1,12 @@
 import LoadingIndicator from '@/components/LoadingIndicator'
+import PokemonStatsCard from '@/components/PokemonStatsCard'
 import { ThemedText } from '@/components/ThemedText'
 import { ThemedView } from '@/components/ThemedView'
 import { GET_POKEMON_DETAIL, GET_POKEMON_DROPDOWN } from '@/graphql/queries'
 import { normalizePokemon } from '@/utils/normalizePokemon'
 import { useQuery } from '@apollo/client'
 import React, { useState } from 'react'
-import { Button, Image, SafeAreaView, StyleSheet } from 'react-native'
+import { Button, SafeAreaView, StyleSheet } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
 
 export default function PokemonComparisonScreen() {
@@ -89,39 +90,8 @@ export default function PokemonComparisonScreen() {
 
         {showResult && poke1Data && poke2Data && (
           <ThemedView style={styles.compareContainer}>
-            {/* Pokémon 1 */}
-            <ThemedView style={styles.pokemonContainer}>
-              <ThemedText style={styles.name}>{poke1Data.name}</ThemedText>
-              <Image source={{ uri: poke1Data.imageUrl }} style={styles.image} />
-              <ThemedText style={styles.stat}>Height: {poke1Data.height} cm</ThemedText>
-              <ThemedText style={styles.stat}>Weight: {poke1Data.weight} kg</ThemedText>
-              <ThemedText style={styles.stat}>Abilities: {poke1Data.abilities}</ThemedText>
-              <ThemedText style={styles.stat}>Catch Rate: {poke1Data.catchRate}</ThemedText>
-              <ThemedText style={styles.stat}>Growth Rate: {poke1Data.growthRate}</ThemedText>
-              <ThemedText style={styles.sectionTitle}>Stats</ThemedText>
-              {poke1Data.stats.map((s, i) => (
-                <ThemedText key={i} style={styles.stat}>
-                  {s.name}: {s.value}
-                </ThemedText>
-              ))}
-            </ThemedView>
-
-            {/* Pokémon 2 */}
-            <ThemedView style={styles.pokemonContainer}>
-              <ThemedText style={styles.name}>{poke2Data.name}</ThemedText>
-              <Image source={{ uri: poke2Data.imageUrl }} style={styles.image} />
-              <ThemedText style={styles.stat}>Height: {poke2Data.height} cm</ThemedText>
-              <ThemedText style={styles.stat}>Weight: {poke2Data.weight} kg</ThemedText>
-              <ThemedText style={styles.stat}>Abilities: {poke2Data.abilities}</ThemedText>
-              <ThemedText style={styles.stat}>Catch Rate: {poke2Data.catchRate}</ThemedText>
-              <ThemedText style={styles.stat}>Growth Rate: {poke2Data.growthRate}</ThemedText>
-              <ThemedText style={styles.sectionTitle}>Stats</ThemedText>
-              {poke2Data.stats.map((s, i) => (
-                <ThemedText key={i} style={styles.stat}>
-                  {s.name}: {s.value}
-                </ThemedText>
-              ))}
-            </ThemedView>
+            <PokemonStatsCard data={poke1Data} />
+            <PokemonStatsCard data={poke2Data} />
           </ThemedView>
         )}
       </ThemedView>
@@ -149,34 +119,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
     gap: 8,
-  },
-  pokemonContainer: {
-    flex: 1,
-    backgroundColor: '#f0f0f0',
-    padding: 12,
-    borderRadius: 8,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    textAlign: 'center',
-    textTransform: 'capitalize',
-  },
-
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'medium',
-    marginVertical: 8,
-    textAlign: 'center',
-  },
-  image: {
-    width: 80,
-    height: 80,
-    marginBottom: 12,
-    alignSelf: 'center',
-  },
-  stat: {
-    fontSize: 14,
   },
 })
