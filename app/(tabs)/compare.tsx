@@ -32,7 +32,7 @@ export default function PokemonComparisonScreen() {
   })
 
   const items =
-    dropdownData?.pokemon_v2_pokemon?.map(({ id, name }) => ({
+    dropdownData?.pokemon_v2_pokemon?.map(({ id, name }: { id: number; name: string }) => ({
       label: name,
       value: id,
     })) || []
