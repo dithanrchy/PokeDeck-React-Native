@@ -17,6 +17,7 @@ export const Colors = {
     primary: '#FF0000',
     primaryButton: '#007AFF',
     secondaryButton: '#e0f0ff',
+    disabledButton: '#CCCCCC',
     containerColor: '#F0F0F0',
   },
   dark: {
@@ -29,6 +30,7 @@ export const Colors = {
     primary: '#D32F2F',
     primaryButton: '#0A84FF',
     secondaryButton: '#1E2A38',
+    disabledButton: '#444444',
     containerColor: '#333333',
   },
 }
