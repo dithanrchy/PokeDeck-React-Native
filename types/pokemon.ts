@@ -34,3 +34,22 @@ export type RawPokemon = {
   pokemon_v2_pokemonstats: PokemonStat[]
   pokemon_v2_pokemonspecy: PokemonSpecies
 }
+
+export type NormalizedPokemon = {
+  id: number
+  name: string
+  height: number // in cm
+  weight: number // in kg
+  imageUrl: string | null
+  types: string[]
+  stats: {
+    name: string
+    value: number
+  }[]
+  growthRate: string
+  genderRate: number
+  hatchSteps: number
+  catchRate: number
+  abilities: string
+  effortValues: string
+}
