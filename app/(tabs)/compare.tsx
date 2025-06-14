@@ -1,12 +1,13 @@
 import LoadingIndicator from '@/components/LoadingIndicator'
 import PokemonStatsCard from '@/components/PokemonStatsCard'
+import { RoundedButton } from '@/components/RoundedButton'
 import { ThemedText } from '@/components/ThemedText'
 import { ThemedView } from '@/components/ThemedView'
 import { GET_POKEMON_DETAIL, GET_POKEMON_DROPDOWN } from '@/graphql/queries'
 import { normalizePokemon } from '@/utils/normalizePokemon'
 import { useQuery } from '@apollo/client'
 import React, { useState } from 'react'
-import { Button, SafeAreaView, StyleSheet } from 'react-native'
+import { SafeAreaView, StyleSheet } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
 
 export default function PokemonComparisonScreen() {
@@ -86,7 +87,12 @@ export default function PokemonComparisonScreen() {
           </ThemedView>
         </ThemedView>
 
-        <Button title="Compare" onPress={handleCompare} disabled={!poke1 || !poke2} />
+        <RoundedButton
+          title="Compare"
+          onPress={handleCompare}
+          disabled={!poke1 || !poke2}
+          style={styles.btnStyle}
+        />
 
         {showResult && poke1Data && poke2Data && (
           <ThemedView style={styles.compareContainer}>
@@ -119,5 +125,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
     gap: 8,
+  },
+  btnStyle: {
+    marginVertical: 16,
   },
 })
