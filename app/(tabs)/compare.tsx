@@ -66,6 +66,8 @@ export default function PokemonComparisonScreen() {
               setValue={setPoke1}
               setItems={() => {}}
               placeholder="Select a Pokémon"
+              searchable
+              searchPlaceholder="Search Pokémon..."
             />
           </ThemedView>
           <ThemedView style={{ width: '50%' }}>
@@ -77,6 +79,8 @@ export default function PokemonComparisonScreen() {
               setValue={setPoke2}
               setItems={() => {}}
               placeholder="Select a Pokémon"
+              searchable
+              searchPlaceholder="Search Pokémon..."
             />
           </ThemedView>
         </ThemedView>
