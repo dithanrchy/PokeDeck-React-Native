@@ -31,7 +31,11 @@ export default function PokemonDetail() {
     <ScrollView contentContainerStyle={styles.container}>
       <PokemonHeader id={pokemon?.id || 0} />
       <ThemedText style={styles.titleName}>{pokemon?.name}</ThemedText>
-      <Image source={{ uri: pokemon?.imageUrl }} style={styles.image} resizeMode="contain" />
+      {pokemon?.imageUrl ? (
+        <Image source={{ uri: pokemon?.imageUrl }} style={styles.image} resizeMode="contain" />
+      ) : (
+        <ThemedText>No image</ThemedText>
+      )}
 
       {/* Profile Section */}
       <ThemedView style={styles.section}>
@@ -49,7 +53,7 @@ export default function PokemonDetail() {
       <ThemedView style={styles.section}>
         <ThemedText style={styles.sectionTitle}>Stats</ThemedText>
         {pokemon?.stats.map((stat: any) => (
-          <StatItem label={formatString(stat.name)} value={stat.value} />
+          <StatItem key={stat.name} label={formatString(stat.name)} value={stat.value} />
         ))}
       </ThemedView>
     </ScrollView>
